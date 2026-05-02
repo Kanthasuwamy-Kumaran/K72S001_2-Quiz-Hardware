@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>கணினி வன்பொருள் தொழில்நுட்பர் NVQ 4 - தேர்வு பயிற்சி</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card2: #1a2234;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #1e3a5f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans Tamil', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(124,58,237,0.07) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,212,255,0.15);
+  }
+  .header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(16px, 3vw, 22px);
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .stat span { font-weight: 700; color: var(--text); }
+  .stat.green span { color: var(--green); }
+  .stat.red span { color: var(--red); }
+  .stat.gold span { color: var(--gold); }
+  .stat.cyan span { color: var(--accent); }
+
+  /* PROGRESS */
+  .progress-wrap {
+    padding: 12px 20px 6px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--card2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* QUESTION CARD */
+  .quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .q-number {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    background: rgba(0,212,255,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,212,255,0.3);
+  }
+  .q-category {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--card2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .option-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.6;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(0,212,255,0.08);
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .opt-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    min-width: 22px;
+  }
+  .option-btn.correct {
+    background: rgba(16,185,129,0.15);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .option-btn.correct .opt-label { color: var(--green); }
+  .option-btn.wrong {
+    background: rgba(239,68,68,0.15);
+    border-color: var(--red);
+  }
+  .option-btn.wrong .opt-label { color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+
+  /* EXPLANATION */
+  .explanation {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(0,212,255,0.05);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--accent); }
+
+  /* NEXT BUTTON */
+  .btn-next {
+    display: none;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* RESULT SCREEN */
+  .result-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .result-screen.show { display: block; }
+  .result-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 4px solid var(--accent);
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: radial-gradient(circle, rgba(0,212,255,0.1), transparent);
+    box-shadow: 0 0 40px rgba(0,212,255,0.2);
+  }
+  .result-score {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .result-total { font-size: 14px; color: var(--muted); }
+  .result-grade {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .result-msg { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
+  .btn-restart {
+    padding: 14px 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-restart:hover { opacity: 0.85; }
+  .btn-mode {
+    padding: 14px 40px;
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 8px;
+    transition: all 0.2s;
+  }
+  .btn-mode:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* START SCREEN */
+  .start-screen {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+  }
+  .start-screen h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .start-screen p { color: var(--muted); margin-bottom: 24px; line-height: 1.7; font-size: 14px; }
+  .mode-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .mode-card h3 { font-size: 16px; color: var(--accent); margin-bottom: 6px; }
+  .mode-card p { font-size: 12px; color: var(--muted); }
+  .mode-icon { font-size: 28px; margin-bottom: 10px; }
+
+  /* TIMER */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .timer-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 50px;
+  }
+  .timer-val.danger { color: var(--red); animation: pulse 0.5s infinite alternate; }
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+  .quiz-main { display: none; }
+  .quiz-main.show { display: block; }
+
+  .category-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cat-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
+
+  .review-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .review-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚙️ கணினி வன்பொருள் தொழில்நுட்பர் | NVQ Level 4</h1>
+  <p>K72S001 — தேர்வு பயிற்சி | 200 கடினமான வினாக்கள்</p>
+</div>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <h2>தேர்வு பயிற்சி தொடங்குவோம்!</h2>
+  <p>இந்த பயிற்சியில் 200 கடினமான வினாக்கள் உள்ளன. <br>
+  தேர்வு முறை: 50 வினாக்கள் | 1 மணி நேரம் | 4 விருப்பங்கள்</p>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startQuiz('exam')">
+      <div class="mode-icon">⏱️</div>
+      <h3>தேர்வு பயிற்சி</h3>
+      <p>50 வினாக்கள், 60 நிமிட கட்டுப்பாடு</p>
+    </div>
+    <div class="mode-card" onclick="startQuiz('practice')">
+      <div class="mode-icon">📚</div>
+      <h3>பயிற்சி முறை</h3>
+      <p>அனைத்து 200 வினாக்கள், நேர கட்டுப்பாடு இல்லை</p>
+    </div>
+    <div class="mode-card" onclick="startQuiz('quick')">
+      <div class="mode-icon">⚡</div>
+      <h3>விரைவு சோதனை</h3>
+      <p>25 வினாக்கள், 20 நிமிடம்</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MAIN -->
+<div class="quiz-main" id="quizMain">
+  <div class="stats-bar">
+    <div class="stat cyan">📋 வினா: <span id="statQ">1</span>/200</div>
+    <div class="stat green">✅ சரி: <span id="statC">0</span></div>
+    <div class="stat red">❌ தவறு: <span id="statW">0</span></div>
+    <div class="stat gold">⏱️ <span class="timer-val" id="timerVal">60:00</span></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 200 முடிந்தது</div>
+  </div>
+
+  <div class="quiz-container" id="quizContainer"></div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="resultScreen">
+  <div class="result-circle">
+    <div class="result-score" id="resScore">0</div>
+    <div class="result-total" id="resTotal">/ 0</div>
+  </div>
+  <div class="result-grade" id="resGrade"></div>
+  <div class="result-msg" id="resMsg"></div>
+  <div style="display:flex;justify-content:center;flex-wrap:wrap;">
+    <button class="btn-restart" onclick="restartSame()">மீண்டும் முயற்சி</button>
+    <button class="btn-mode" onclick="goHome()">🏠 முகப்பு</button>
+  </div>
+</div>
+
+<script>
+const allQuestions = [
+  // ===== UNIT 1: ESTIMATES & QUOTATIONS =====
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"வாடிக்கையாளரின் தேவைகளை வரையறுக்கும் நடைமுறையில் முதல் படி என்ன?", opts:["விலைப்பட்டியல் தயாரிப்பு","வாடிக்கையாளர் தேவை சேகரிப்பு","கூறுகள் கொள்முதல்","பணி அட்டை நிரப்புதல்"], ans:1, exp:"SOP படி வாடிக்கையாளரின் தேவையை முதலில் சேகரிக்க வேண்டும்."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"விலைப்பட்டியலில் 'Labour cost' என்பது எதனைக் குறிக்கிறது?", opts:["பொருள் செலவு","கடத்தல் செலவு","தொழிலாளர் செலவு","உரிமம் செலவு"], ans:2, exp:"Labour cost என்பது தொழிலாளர் செலவை குறிக்கும் - இது விலைப்பட்டியலில் முக்கிய கூறு."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"அங்கீகரிக்கப்பட்ட மதிப்பீட்டில் பதிவுகள் வைக்கப்படுவதற்கான நோக்கம் என்ன?", opts:["வாடிக்கையாளரை மகிழ்விக்க","SOP படி அலுவலக பதிவுக்காக","விலை உயர்த்த","கூறுகளை தேர்ந்தெடுக்க"], ans:1, exp:"SOP (Standard Operating Procedure) படி அங்கீகரிக்கப்பட்ட மதிப்பீட்டின் பதிவுகளை வைத்திருக்க வேண்டும்."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"மதிப்பீட்டில் 'Overhead charges' என்பது என்ன?", opts:["கடத்தல் செலவு","மேல்நிலை செலவுகள்","வரி","உரிமம்"], ans:1, exp:"Overhead charges என்பது நேரடியாக தொடர்பு இல்லாத மேல்நிலை செலவுகள் - வாடகை, மின்சாரம் போன்றவை."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"Preventive Maintenance agreement-க்கான மதிப்பீட்டை யார் அங்கீகரிக்க வேண்டும்?", opts:["வாடிக்கையாளர் மட்டும்","அங்கீகாரம் பெற்ற நபர்","வேலையாட்கள்","பொருள் வழங்குநர்"], ans:1, exp:"அங்கீகாரம் பெற்ற நபரால் (Authorized person) மதிப்பீட்டை அங்கீகரிக்க வேண்டும்."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"SOP என்பதன் விரிவாக்கம் என்ன?", opts:["Standard Operation Protocol","System Operating Procedure","Standard Operating Procedure","Software Operation Plan"], ans:2, exp:"SOP = Standard Operating Procedure - நிலையான செயல்பாட்டு நடைமுறை."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"விலைப்பட்டியல் தயாரிக்க எந்த மென்பொருள் பயன்படுத்தப்படுகிறது?", opts:["Word Processing","Spreadsheet","Presentation","Antivirus"], ans:1, exp:"Spreadsheet மென்பொருள் (Excel போன்றவை) விலைப்பட்டியல் தயாரிக்க பயன்படுகிறது."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"Government taxes என்பது மதிப்பீட்டின் எந்த பகுதியில் சேர்க்கப்படும்?", opts:["Labour cost","Material cost","Cost elements","Delivery cost"], ans:2, exp:"Government taxes என்பது cost elements-ல் சேர்க்கப்படும்."},
+
+  // ===== UNIT 2: RECTIFY ISSUES =====
+  {cat:"கோளாறு சரிசெய்தல்", q:"Comprehensive warranty என்பது என்ன?", opts:["உழைப்பு மட்டும் உள்ளடக்கும்","பொருள் மற்றும் உழைப்பு இரண்டும் உள்ளடக்கும்","பொருள் மட்டும் உள்ளடக்கும்","எதுவும் உள்ளடக்காது"], ans:1, exp:"Comprehensive warranty என்பது பொருள் மற்றும் உழைப்பு (parts & service) இரண்டையும் உள்ளடக்கும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"Job card-ல் பதிவு செய்யப்படும் visual inspection என்பது என்ன?", opts:["விலை பதிவு","உடல் சேதம், இல்லாத பாகங்கள்","வாடிக்கையாளர் முகவரி","வார்ரண்டி தகவல்"], ans:1, exp:"Visual inspection-ல் physical damages, accessories, missing parts போன்றவை பதிவு செய்யப்படும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"கணினியை சோதிப்பதற்கு முன் PPE அணிவது ஏன் முக்கியம்?", opts:["தோற்றம் சிறக்க","நிலையான மின்னோட்டத்திலிருந்து பாதுகாக்க","விரைவாக வேலை செய்ய","வாடிக்கையாளரை மகிழ்விக்க"], ans:1, exp:"PPE (Personal Protective Equipment) மற்றும் static protective cloths கணினி கூறுகளை ESD-யிலிருந்து பாதுகாக்கும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"Antivirus மென்பொருளை புதுப்பிக்காவிட்டால் என்ன நடக்கும்?", opts:["கணினி வேகமாக இயங்கும்","புதிய வைரஸ்களை கண்டறிய முடியாது","வன்பொருள் சேதமடையும்","RAM அதிகமாகும்"], ans:1, exp:"Antivirus புதுப்பிக்காவிட்டால் புதிய malware வகைகளை கண்டறிய முடியாது."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"Malicious software-ஐ கண்டறிய எந்த முறை பயன்படுகிறது?", opts:["Defragmentation","Disk cleanup","Scanning using relevant software","System restore"], ans:2, exp:"Relevant anti-malware software பயன்படுத்தி scanning செய்வதன் மூலம் malicious software கண்டறியப்படும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"கணினி கூறுகளை சுத்தம் செய்ய என்ன பயன்படுத்தப்படுகிறது?", opts:["தண்ணீர்","Contact cleaner","Thermal compound","Soldering flux"], ans:1, exp:"Hardware/network components cleaning agents பயன்படுத்தி manufacturer's guidelines படி சுத்தம் செய்யப்படும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"வார்ரண்டி காலம் முடிந்த கணினியை சரிசெய்ய வாடிக்கையாளரிடம் என்ன வாங்க வேண்டும்?", opts:["பண முன்பணம்","Concurrence/அனுமதி","Warranty card","None"], ans:1, exp:"வாடிக்கையாளரின் concurrence (அனுமதி) பெற்ற பின்னரே detailed diagnosis செய்ய வேண்டும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"MSDS என்பதன் விரிவாக்கம் என்ன?", opts:["Material Safety Data Sheet","Machine Service Data Standard","Maintenance Safety Diagnostic Sheet","Monitor System Data Sheet"], ans:0, exp:"MSDS = Material Safety Data Sheet - வேதியியல் பொருட்களின் பாதுகாப்பு தகவல் தாள்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"E-waste என்பதை யாரின் மேற்பார்வையில் அகற்ற வேண்டும்?", opts:["வாடிக்கையாளர்","மேலதிகாரி","அரசாங்கம்","வழங்குநர்"], ans:1, exp:"E-waste disposal மேலதிகாரியின் மேற்பார்வையில் சுற்றுச்சூழல் விதிமுறைகளுக்கு ஏற்ப செய்யப்படும்."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"AI (Artificial Intelligence) Computer Hardware Technician-க்கு எப்படி உதவுகிறது?", opts:["விலை நிர்ணயம்","கோளாறு கண்டறிதல் மற்றும் தீர்வு","வார்ரண்டி சோதனை","வாடிக்கையாளர் நிர்வாகம்"], ans:1, exp:"AI கணினி கோளாறுகளை வேகமாக கண்டறியவும் சரிசெய்யவும் உதவுகிறது - NCS-ல் AI குறிப்பிடப்பட்டுள்ளது."},
+
+  // ===== UNIT 3: CUSTOMIZE CONFIGURATION =====
+  {cat:"கணினி அமைவு", q:"கணினி அசெம்பிள் செய்யும்போது ESD பாதுகாப்பிற்கு என்ன அணிய வேண்டும்?", opts:["கையுறை மட்டும்","Anti-static wrist strap","காலணி","தலைக்கவசம்"], ans:1, exp:"Anti-static wrist strap (static protective cloth) ESD-யிலிருந்து கூறுகளை பாதுகாக்கும்."},
+  {cat:"கணினி அமைவு", q:"BIOS என்பதன் விரிவாக்கம் என்ன?", opts:["Basic Input Output System","Binary Input Output Structure","Base Input Output Software","Basic Internal Output System"], ans:0, exp:"BIOS = Basic Input Output System - கணினி துவங்கும்போது hardware சோதிக்கும் firmware."},
+  {cat:"கணினி அமைவு", q:"UEFI, BIOS-க்கு மாற்றாக வந்தது. UEFI-யின் முக்கிய நன்மை என்ன?", opts:["குறைந்த விலை","வேகமான boot, 2TB+ disk support","அதிக RAM","குறைந்த மின்சாரம்"], ans:1, exp:"UEFI வேகமான boot time, 2TB-க்கு மேல் disk support, Secure Boot போன்ற நன்மைகளை வழங்குகிறது."},
+  {cat:"கணினி அமைவு", q:"POST என்பது என்ன?", opts:["Power On Self Test","Program Operating System Test","Primary Output System Test","Peripheral On Start Test"], ans:0, exp:"POST = Power On Self Test - கணினி இயங்கும்போது hardware-ஐ சோதிக்கும் செயல்முறை."},
+  {cat:"கணினி அமைவு", q:"Beep codes எதனை குறிக்கின்றன?", opts:["Battery charge level","Hardware errors during POST","Software version","Network connectivity"], ans:1, exp:"Beep codes என்பது POST-ன் போது hardware பிழைகளை குறிக்கும் ஒலி சமிக்ஞைகள்."},
+  {cat:"கணினி அமைவு", q:"Job card-ல் வாடிக்கையாளர் விவரங்களை நிரப்பும்போது என்ன தகவல் சேர்க்க வேண்டும்?", opts:["பெயர் மட்டும்","பெயர், தொடர்பு, முகவரி, தொலைபேசி, மின்னஞ்சல்","விலை மட்டும்","கோளாறு மட்டும்"], ans:1, exp:"Job card-ல் Customer name, contact details (postal address, email, telephone, site location) சேர்க்க வேண்டும்."},
+  {cat:"கணினி அமைவு", q:"Central Environmental Authority (CEA) எந்த சட்டத்தின் கீழ் செயல்படுகிறது?", opts:["National Environment Act No.47 of 1980","Labour Act No.15 of 1972","Factories Ordinance No.45 of 1942","Computer Crimes Act No.24 of 2007"], ans:0, exp:"CEA = National Environment Act No.47 of 1980 கீழ் செயல்படுகிறது."},
+  {cat:"கணினி அமைவு", q:"FRU என்பதன் விரிவாக்கம் என்ன?", opts:["Field Repair Unit","Fault Replicable Unit","Fixed Resource Utility","Function Repair Unit"], ans:1, exp:"FRU = Fault Replicable Unit - மாற்றக்கூடிய கணினி கூறுகளை குறிக்கும்."},
+
+  // ===== UNIT 4: PREVENTIVE MAINTENANCE =====
+  {cat:"தடுப்பு பராமரிப்பு", q:"Preventive Maintenance-ஐ தொடங்குமுன் என்ன உருவாக்க வேண்டும்?", opts:["New partition","Restore point","Admin account","Network share"], ans:1, exp:"PM தொடங்குமுன் System Restore point உருவாக்க வேண்டும் - தரவு பாதுகாப்பிற்காக."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"Thermal compound எந்த கூறுக்கும் heat sink-க்கும் இடையே பயன்படுகிறது?", opts:["RAM","HDD","CPU/Processor","GPU"], ans:2, exp:"Thermal compound CPU/Processor மற்றும் Heat sink-க்கு இடையே வெப்பம் திறம்பட பரவ பயன்படுகிறது."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"Disk Cleanup என்பது என்ன செய்யும்?", opts:["Virus நீக்கும்","தேவையற்ற files அகற்றும்","Defragment செய்யும்","Driver update செய்யும்"], ans:1, exp:"Disk Cleanup temporary files, recycle bin, system cache போன்ற தேவையற்ற கோப்புகளை நீக்கும்."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"ESD என்பதன் விரிவாக்கம் என்ன?", opts:["Electronic Static Discharge","Electrostatic Discharge","Electronic System Damage","Electrical Static Device"], ans:1, exp:"ESD = Electrostatic Discharge - நிலையான மின்சாரம் வெளியேறுவது, கணினி கூறுகளை சேதப்படுத்தலாம்."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"PM-ல் ports மற்றும் connectors சுத்தம் செய்ய என்ன பயன்படுகிறது?", opts:["Water","Contact cleaner","Alcohol","Thermal compound"], ans:1, exp:"Contact cleaners பயன்படுத்தி ports மற்றும் connectors de-oxidize செய்யப்படும்."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"Backup restore எப்போது செய்யப்படும்?", opts:["PM தொடங்குமுன்","PM முடிந்தபின் தேவையென்றால்","எப்போதும் செய்ய வேண்டும்","வாடிக்கையாளர் கேட்கும்போது மட்டும்"], ans:1, exp:"PM முடிந்து hardware/software பணி நிறைவடைந்த பின் தேவையெனில் backup restore செய்யப்படும்."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"PM-ல் operating system update-ஐ எப்போது செய்வார்கள்?", opts:["எப்போதும்","தேவையெனில் SOP படி","வாடிக்கையாளர் சம்மதமின்றி","தினமும்"], ans:1, exp:"OS update 'if required' என்று SOP படி தேவையெனில் மட்டும் செய்யப்படும்."},
+  {cat:"தடுப்பு பராமரிப்பு", q:"PM Agreement review-ல் என்ன சோதிக்கப்படும்?", opts:["வாடிக்கையாளர் விலை","பணிகளின் நோக்கம் மற்றும் நிபந்தனைகள்","கூறுகளின் விலை","OS version"], ans:1, exp:"Maintenance agreement review-ல் பணிகளின் நோக்கம், நிபந்தனைகள், கணினி சோதனை ஆகியவை உள்ளடங்கும்."},
+
+  // ===== UNIT 5: SOFTWARE INSTALLATION =====
+  {cat:"மென்பொருள் நிறுவல்", q:"OS நிறுவலுக்கு முன் HDD/SSD-ஐ எந்த கட்டத்தில் partition செய்வார்கள்?", opts:["OS நிறுவலுக்கு பின்","OS நிறுவல் நடைமுறையில்","வாடிக்கையாளர் கேட்கும்போது","எப்போதும் partition தேவையில்லை"], ans:1, exp:"HDD/SSD partition வாடிக்கையாளர் தேவைப்படி OS நிறுவல் நடைமுறையிலேயே செய்யப்படும்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"Device driver-ஐ ஏன் நிறுவ வேண்டும்?", opts:["Internet தேவை","Hardware-ஐ OS-உடன் செயல்பட வைக்க","Antivirus-க்கு","வேகம் அதிகரிக்க"], ans:1, exp:"Device drivers hardware components-ஐ Operating System-உடன் தகவல் தொடர்பு கொள்ள வைக்கும்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"Software license என்பது எதை உறுதி செய்கிறது?", opts:["மென்பொருள் வேகம்","சட்டப்பூர்வ பயன்பாட்டு உரிமை","Hardware compatibility","Network speed"], ans:1, exp:"Software license என்பது மென்பொருளை சட்டப்பூர்வமாக பயன்படுத்தும் உரிமையை வழங்கும்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"OS activation செய்யாவிட்டால் என்ன நடக்கும்?", opts:["எதுவும் நடக்காது","சில features கட்டுப்படுத்தப்படும்","Computer crash ஆகும்","Virus வரும்"], ans:1, exp:"OS activation செய்யாவிட்டால் watermark காட்டப்படும், personalization மற்றும் security updates கட்டுப்படுத்தப்படும்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"EULA என்பதன் விரிவாக்கம் என்ன?", opts:["End User License Agreement","Electronic User Local Application","Extended Usage License Arrangement","Enterprise User License Agreement"], ans:0, exp:"EULA = End User License Agreement - மென்பொருள் பயன்படுத்தும் நிபந்தனைகள் பட்டியல்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"FOSS என்பதன் விரிவாக்கம் என்ன?", opts:["Fast Operating System Software","Free and Open Source Software","Full Operating System Suite","Fixed Output Software System"], ans:1, exp:"FOSS = Free and Open Source Software - இலவசமாக பயன்படுத்தவும் மாற்றவும் கிடைக்கும் மென்பொருள்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"System Cloning என்பது என்ன?", opts:["Virus நகல்","முழு partition-ஐ அப்படியே நகல் எடுப்பது","File backup","OS update"], ans:1, exp:"System Cloning என்பது ஒரு கணினியின் முழு disk/partition நிலையையும் மற்றொரு disk-க்கு நகல் எடுப்பது."},
+  {cat:"மென்பொருள் நிறுவல்", q:"Utility software என்பதற்கு எடுத்துக்காட்டு என்ன?", opts:["MS Word","Disk Cleanup, Antivirus","Google Chrome","Photoshop"], ans:1, exp:"Disk Cleanup, Antivirus, Defragmenter போன்றவை utility software ஆகும்."},
+
+  // ===== UNIT 6: HARDWARE UPGRADE =====
+  {cat:"வன்பொருள் மேம்படுத்தல்", q:"RAM upgrade செய்யும்போது முதலில் என்ன சோதிக்க வேண்டும்?", opts:["விலை","Motherboard-ல் உள்ள slot type மற்றும் max capacity","OS version","HDD space"], ans:1, exp:"RAM upgrade-க்கு Motherboard-ல் port type (DDR4/DDR5), available slots, maximum supported capacity சோதிக்க வேண்டும்."},
+  {cat:"வன்பொருள் மேம்படுத்தல்", q:"SSD-யை HDD-யாக மாற்றும்போது என்ன கவலைப்பட வேண்டும்?", opts:["விலை மட்டும்","Interface compatibility (SATA/NVMe/PCIe)","நிறம்","எடை"], ans:1, exp:"SSD upgrade-ல் interface type (SATA, NVMe M.2, PCIe) compatibility சோதிக்க வேண்டியது மிக முக்கியம்."},
+  {cat:"வன்பொருள் மேம்படுத்தல்", q:"External device setup செய்த பின் என்ன செய்ய வேண்டும்?", opts:["உடனே கட்டணம் வசூலிக்க","Documentation பூர்த்தி செய்ய","OS மீண்டும் நிறுவ","Restart மட்டும் செய்ய"], ans:1, exp:"External device setup முடிந்த பின் functionality test, commission மற்றும் documentation பூர்த்தி செய்ய வேண்டும்."},
+  {cat:"வன்பொருள் மேம்படுத்தல்", q:"Cloud storage setup-ல் என்ன தேவை?", opts:["Physical cable மட்டும்","Internet connectivity மற்றும் account","Special hardware","VPN மட்டும்"], ans:1, exp:"Cloud storage-க்கு internet connectivity, cloud service account, மற்றும் பொருத்தமான software தேவை."},
+  {cat:"வன்பொருள் மேம்படுத்தல்", q:"GPU (Graphics Card) upgrade-க்கு எந்த slot தேவை?", opts:["RAM slot","PCIe x16 slot","M.2 slot","SATA port"], ans:1, exp:"GPU-க்கு PCIe x16 slot தேவை. இது modern motherboard-களில் கிடைக்கும்."},
+
+  // ===== UNIT 7: NETWORK =====
+  {cat:"வலையமைப்பு", q:"Network layout sketch-ஐ யாரிடம் அங்கீகரிக்க வேண்டும்?", opts:["Company CEO","வாடிக்கையாளர்","TVEC","Government"], ans:1, exp:"Network layout final ஆவதற்கு வாடிக்கையாளரிடம் அங்கீகரிக்க (approval) வேண்டும்."},
+  {cat:"வலையமைப்பு", q:"DHCP என்பது என்ன செய்கிறது?", opts:["Firewall protection","Automatic IP address assignment","File sharing","Print sharing"], ans:1, exp:"DHCP (Dynamic Host Configuration Protocol) network-ல் devices-க்கு automatic IP address வழங்கும்."},
+  {cat:"வலையமைப்பு", q:"DNS என்பதன் விரிவாக்கம் என்ன?", opts:["Dynamic Network System","Domain Name System","Data Network Server","Digital Node Structure"], ans:1, exp:"DNS = Domain Name System - domain names-ஐ IP addresses-க்கு மாற்றும் சேவை."},
+  {cat:"வலையமைப்பு", q:"WPA3 என்பது எதனுடன் சம்பந்தப்பட்டது?", opts:["Wired network security","Wireless network security","Firewall","VPN"], ans:1, exp:"WPA3 (Wi-Fi Protected Access 3) wireless network-ன் மிக புதிய மற்றும் பாதுகாப்பான encryption standard."},
+  {cat:"வலையமைப்பு", q:"RJ-45 jack என்பது எதில் பயன்படுகிறது?", opts:["Phone cable","Ethernet/Network cable","Optical fiber","Power cable"], ans:1, exp:"RJ-45 jack Ethernet (Cat5e, Cat6) network cable connections-ல் பயன்படுகிறது."},
+  {cat:"வலையமைப்பு", q:"OSI model-ல் எத்தனை layers உள்ளன?", opts:["4","5","7","9"], ans:2, exp:"OSI model-ல் 7 layers உள்ளன: Physical, Data Link, Network, Transport, Session, Presentation, Application."},
+  {cat:"வலையமைப்பு", q:"IPv4 address-ல் எத்தனை bits உள்ளன?", opts:["16","32","64","128"], ans:1, exp:"IPv4 address 32 bits கொண்டது (4 octets × 8 bits = 32 bits)."},
+  {cat:"வலையமைப்பு", q:"IPv6 address-ல் எத்தனை bits உள்ளன?", opts:["32","64","128","256"], ans:2, exp:"IPv6 address 128 bits கொண்டது, IPv4-ன் முகவரி கட்டுப்பாட்டை தீர்க்க வடிவமைக்கப்பட்டது."},
+  {cat:"வலையமைப்பு", q:"Ping command என்ன செய்கிறது?", opts:["Network speed measure","Network connectivity test","File download","DNS lookup"], ans:1, exp:"Ping command network connectivity சோதிக்கிறது - host reachable-ஆ என்று ICMP packets அனுப்பி சோதிக்கும்."},
+  {cat:"வலையமைப்பு", q:"Star topology-யின் முக்கிய நன்மை என்ன?", opts:["குறைந்த cable","ஒரு device fail ஆனாலும் மற்றவை பாதிக்காது","விரைவான speed","குறைந்த விலை"], ans:1, exp:"Star topology-ல் ஒரு node fail ஆனாலும் மற்ற nodes பாதிக்கப்படாது - centralized hub/switch பயன்படுகிறது."},
+  {cat:"வலையமைப்பு", q:"Subnet mask 255.255.255.0 என்பது எந்த class?", opts:["Class A","Class B","Class C","Class D"], ans:2, exp:"255.255.255.0 subnet mask Class C network-ஐ குறிக்கிறது (192.168.x.x range)."},
+  {cat:"வலையமைப்பு", q:"Traceroute command என்ன செய்கிறது?", opts:["DNS resolve","Network path and hops சோதிக்கும்","File transfer","Port scan"], ans:1, exp:"Traceroute source-லிருந்து destination வரை packets எந்த routers வழியாக செல்கின்றன என காட்டும்."},
+  {cat:"வலையமைப்பு", q:"UPS என்பதன் விரிவாக்கம் என்ன?", opts:["Universal Power Supply","Uninterruptible Power Supply","Unified Power System","Utility Power Surge"], ans:1, exp:"UPS = Uninterruptible Power Supply - திடீர் மின்தடை ஏற்பட்டாலும் கணினிக்கு மின்சாரம் தொடர்ந்து வழங்கும்."},
+  {cat:"வலையமைப்பு", q:"Surge arrester என்பது எதிலிருந்து பாதுகாக்கிறது?", opts:["Virus attacks","Power surges/lightning","Network attacks","Data loss"], ans:1, exp:"Surge arrester மின்னல் மற்றும் திடீர் மின்சாரம் அதிகரிப்பிலிருந்து equipment-ஐ பாதுகாக்கிறது."},
+  {cat:"வலையமைப்பு", q:"VPN என்பதன் விரிவாக்கம் என்ன?", opts:["Virtual Private Network","Very Protected Node","Variable Protocol Network","Verified Public Network"], ans:0, exp:"VPN = Virtual Private Network - internet வழியாக private, encrypted connection உருவாக்கும்."},
+  {cat:"வலையமைப்பு", q:"Switch-ஐ Hub-விட சிறந்தது ஏன்?", opts:["குறைந்த விலை","Specific port-க்கு data அனுப்பும் (intelligent)","அதிக ports","வேகமான connection"], ans:1, exp:"Switch MAC address table பயன்படுத்தி specific destination port-க்கு மட்டும் data அனுப்பும், hub broadcast செய்யும்."},
+
+  // ===== CYBER SECURITY =====
+  {cat:"இணைய பாதுகாப்பு", q:"Social engineering attack என்பது என்ன?", opts:["Hardware attack","மனித ஏமாற்று வழி தகவல் திருட்டு","Network hacking","Password brute force"], ans:1, exp:"Social engineering மனித உளவியலை பயன்படுத்தி ஏமாற்றி தகவல் திருடும் தாக்குதல் முறை."},
+  {cat:"இணைய பாதுகாப்பு", q:"Ransomware என்பது என்ன செய்கிறது?", opts:["Files திருடும்","Files encrypt செய்து பணம் கேட்கும்","Network block செய்யும்","Hardware சேதப்படுத்தும்"], ans:1, exp:"Ransomware files-ஐ encrypt செய்து decryption-க்கு பணம் (ransom) கேட்கும் malware வகை."},
+  {cat:"இணைய பாதுகாப்பு", q:"Firewall என்பது என்ன செய்கிறது?", opts:["Virus நீக்கும்","அங்கீகரிக்கப்படாத network access தடுக்கும்","HDD format செய்யும்","OS update செய்யும்"], ans:1, exp:"Firewall network traffic monitor செய்து unauthorized access-ஐ தடுக்கும்."},
+  {cat:"இணைய பாதுகாப்பு", q:"Phishing என்பது என்ன?", opts:["Network attack","போலி websites/emails மூலம் தகவல் திருட்டு","Virus","Hardware failure"], ans:1, exp:"Phishing legitimate நிறுவனங்களைப் போல் நடித்து credentials, passwords திருடும் தாக்குதல்."},
+  {cat:"இணைய பாதுகாப்பு", q:"Spyware என்பது என்ன செய்கிறது?", opts:["Files delete செய்யும்","பயனர் செயல்பாடுகளை ரகசியமாக கண்காணிக்கும்","Network slow செய்யும்","System restart செய்யும்"], ans:1, exp:"Spyware user activity-ஐ கண்காணித்து தகவல் திருடும் - keyloggers இதன் ஒரு வகை."},
+  {cat:"இணைய பாதுகாப்பு", q:"Two-factor authentication (2FA) என்பது என்ன?", opts:["இரண்டு password","Password + additional verification","Email + SMS","Hardware + Software"], ans:1, exp:"2FA password கூடுதலாக OTP, biometric போன்ற second verification தேவைப்படும் பாதுகாப்பு முறை."},
+  {cat:"இணைய பாதுகாப்பு", q:"Trojan horse என்பது என்ன?", opts:["Network virus","சட்டமான மென்பொருளாக தோன்றும் தீம்பொருள்","Hardware malfunction","OS error"], ans:1, exp:"Trojan horse legitimate software போல் தோன்றும் ஆனால் நிறுவியதும் தீங்கு செய்யும் malware."},
+  {cat:"இணைய பாதுகாப்பு", q:"Group Policy என்பது எதில் பயன்படுகிறது?", opts:["Home computers only","Network-ல் users மற்றும் computers-ஐ நிர்வகிக்க","Antivirus settings","Hardware management"], ans:1, exp:"Group Policy Windows network-ல் users, computers-க்கு settings மற்றும் கட்டுப்பாடுகளை centrally நிர்வகிக்க பயன்படும்."},
+
+  // ===== ELECTRICITY & ELECTRONICS =====
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Ohm's law-ன்படி V = IR. R = 100Ω, I = 0.5A எனில் V என்ன?", opts:["50V","150V","200V","0.005V"], ans:0, exp:"V = I × R = 0.5 × 100 = 50V. Ohm's law: Voltage = Current × Resistance."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Capacitor என்பது என்ன செய்கிறது?", opts:["Current amplify","Electrical energy store","Resistance increase","Signal generate"], ans:1, exp:"Capacitor electrical energy store செய்து தேவையான போது வெளியிடும், filter circuits-லும் பயன்படும்."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Transistor-ன் மூன்று terminals என்ன?", opts:["Anode, Cathode, Gate","Base, Collector, Emitter","Input, Output, Ground","Source, Drain, Gate"], ans:1, exp:"Transistor-ன் மூன்று terminals: Base (B), Collector (C), Emitter (E). இது signal amplify மற்றும் switch ஆக பயன்படும்."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"MOSFET-ல் 'S' என்பது என்ன?", opts:["Switch","Semiconductor","Source","Signal"], ans:2, exp:"MOSFET = Metal Oxide Semiconductor Field Effect Transistor. Terminals: Source, Drain, Gate."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Multimeter-ல் AC voltage அளக்க எந்த setting பயன்படுகிறது?", opts:["DCA","ACV","DCmA","Ω"], ans:1, exp:"ACV (AC Voltage) setting பயன்படுத்தி மின்சார மாற்று மின்னழுத்தம் அளக்கலாம்."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"EMI என்பதன் விரிவாக்கம் என்ன?", opts:["Electronic Module Interface","Electromagnetic Interference","Electrical Measuring Instrument","External Module Integration"], ans:1, exp:"EMI = Electromagnetic Interference - மின்காந்த அலைகளால் உண்டாகும் குறுக்கீடு."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Diode எந்த திசையில் மின்னோட்டத்தை அனுமதிக்கிறது?", opts:["இரு திசைகளிலும்","ஒரு திசையில் மட்டும்","திசை எதுவும் இல்லை","AC மட்டும்"], ans:1, exp:"Diode ஒரு திசையில் மட்டும் மின்னோட்டம் அனுமதிக்கும் - anode to cathode (forward biased)."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"Soldering iron-ல் பயன்படும் உலோகம் எது?", opts:["Copper","Silver","Solder (Tin-Lead alloy)","Aluminum"], ans:2, exp:"Solder என்பது Tin (60%) மற்றும் Lead (40%) கலவை (அல்லது lead-free variants), electronic joints இணைக்க பயன்படும்."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"ATX power supply-ல் 24-pin connector எதனுடன் இணைக்கப்படுகிறது?", opts:["CPU","Motherboard","HDD","GPU"], ans:1, exp:"ATX 24-pin main power connector motherboard-உடன் இணைக்கப்படுகிறது."},
+  {cat:"மின்னியல் & மின்னணுவியல்", q:"UPS-ல் SPS என்பதன் விரிவாக்கம் என்ன?", opts:["Standby Power Supply","Super Power System","Standard Power Source","Surge Protection Switch"], ans:0, exp:"SPS = Standby Power Supply - power failure ஆனாலும் battery மூலம் power வழங்கும்."},
+
+  // ===== COMPUTER COMPONENTS =====
+  {cat:"கணினி கூறுகள்", q:"CPU-வின் cache memory எதற்காக பயன்படுகிறது?", opts:["Long-term storage","Frequently used data fast access","Network storage","Graphics processing"], ans:1, exp:"CPU Cache memory அடிக்கடி பயன்படும் data மற்றும் instructions-ஐ வேகமாக access செய்ய வைக்கும்."},
+  {cat:"கணினி கூறுகள்", q:"DDR4 RAM-ஐ DDR3 slot-ல் பயன்படுத்த முடியுமா?", opts:["ஆம், எந்த RAM-ம் பொருந்தும்","இல்லை, physically மற்றும் electrically compatible இல்லை","ஆம், adapter பயன்படுத்தி","சில நேரம் மட்டும்"], ans:1, exp:"DDR4 மற்றும் DDR3 different notch positions மற்றும் voltage requirements உள்ளதால் interchangeable இல்லை."},
+  {cat:"கணினி கூறுகள்", q:"NVMe SSD எந்த interface பயன்படுத்துகிறது?", opts:["SATA","USB","PCIe","SCSI"], ans:2, exp:"NVMe (Non-Volatile Memory Express) PCIe interface பயன்படுத்துகிறது, SATA-விட மிக வேகமானது."},
+  {cat:"கணினி கூறுகள்", q:"Motherboard chipset என்ன செய்கிறது?", opts:["Graphics process","CPU, RAM, peripherals communication நிர்வகிக்கும்","Power supply regulate","Sound process"], ans:1, exp:"Chipset motherboard-ல் CPU, RAM, storage, USB, PCIe போன்ற components communication நிர்வகிக்கும்."},
+  {cat:"கணினி கூறுகள்", q:"CMOS battery எதற்காக பயன்படுகிறது?", opts:["Main power","BIOS settings மற்றும் clock பாதுகாக்க","RAM backup","GPU power"], ans:1, exp:"CMOS battery கணினி off ஆனாலும் BIOS settings, date/time maintain செய்ய பயன்படும்."},
+  {cat:"கணினி கூறுகள்", q:"PSU (Power Supply Unit) என்ன செய்கிறது?", opts:["Graphics display","AC to DC convert செய்கிறது","Network manage","Storage control"], ans:1, exp:"PSU AC mains power-ஐ கணினிக்கு தேவையான DC voltages-க்கு (12V, 5V, 3.3V) மாற்றும்."},
+  {cat:"கணினி கூறுகள்", q:"Heat sink என்பது என்ன செய்கிறது?", opts:["Power supply","CPU heat absorb மற்றும் dissipate செய்யும்","RAM cool செய்யும்","Case air circulate செய்யும்"], ans:1, exp:"Heat sink CPU-ல் உருவாகும் வெப்பத்தை absorb செய்து air cooling மூலம் dissipate செய்யும்."},
+  {cat:"கணினி கூறுகள்", q:"Optical drive என்பது எந்த storage media பயன்படுத்துகிறது?", opts:["Magnetic disk","Semiconductor","Laser/Optical disc (CD/DVD/Blu-ray)","Flash memory"], ans:2, exp:"Optical drive laser light பயன்படுத்தி CD, DVD, Blu-ray disc-களை read/write செய்யும்."},
+  {cat:"கணினி கூறுகள்", q:"DisplayPort-ஐ HDMI-விட சிறந்தது ஏன்?", opts:["குறைந்த விலை","Higher resolution, faster refresh rate support","Compact size","Power delivery"], ans:1, exp:"DisplayPort அதிக bandwidth கொண்டதால் 4K 144Hz+ போன்ற high refresh rate/resolution support செய்யும்."},
+  {cat:"கணினி கூறுகள்", q:"Thunderbolt port எந்த company உருவாக்கியது?", opts:["AMD","Intel + Apple","NVIDIA","Microsoft"], ans:1, exp:"Thunderbolt port Intel மற்றும் Apple இணைந்து உருவாக்கியது - high-speed data transfer + video support."},
+
+  // ===== GREEN IT =====
+  {cat:"Green IT", q:"WEEE Directive என்பது என்ன?", opts:["Web Energy Efficiency Extension","Waste Electrical and Electronic Equipment Directive","Wireless Ethernet Energy Evaluation","World Ecological Environment Enforcement"], ans:1, exp:"WEEE = Waste Electrical and Electronic Equipment Directive - மின்னணு கழிவு மேலாண்மை பற்றிய EU விதிமுறை."},
+  {cat:"Green IT", q:"ISO 14001 எதனை சான்றளிக்கிறது?", opts:["Quality Management","Environmental Management System","Information Security","IT Service Management"], ans:1, exp:"ISO 14001 Environmental Management System (EMS) certification - நிறுவனத்தின் சுற்றுச்சூழல் மேலாண்மையை சான்றளிக்கும்."},
+  {cat:"Green IT", q:"Carbon footprint என்பது என்ன?", opts:["CO2 emissions அளவு","Carbon fiber materials","Carbon copy documents","Carbon dating"], ans:0, exp:"Carbon footprint ஒரு செயல்பாடு அல்லது நிறுவனம் வெளியிடும் CO2 மற்றும் greenhouse gas emissions அளவு."},
+  {cat:"Green IT", q:"Virtualization என்பது எவ்வாறு energy save செய்கிறது?", opts:["Less cooling needed","Multiple virtual servers on one physical server","Small screen size","Low brightness"], ans:1, exp:"Virtualization மூலம் ஒரு physical server-ல் multiple virtual servers இயங்குவதால் server count குறைந்து energy save ஆகிறது."},
+  {cat:"Green IT", q:"Energy Star என்பது என்ன?", opts:["Network standard","Energy efficient products certification program","E-waste recycling","Green software"], ans:1, exp:"Energy Star USA EPA-யின் program - energy efficient products-க்கு certification வழங்கும்."},
+  {cat:"Green IT", q:"E-waste-ல் மிக ஆபத்தான chemical என்ன?", opts:["Plastic","Lead, Mercury, Cadmium","Aluminum","Copper"], ans:1, exp:"E-waste-ல் Lead (CRT monitors), Mercury (fluorescent lamps), Cadmium (batteries) மிக ஆபத்தான chemicals."},
+
+  // ===== OHS =====
+  {cat:"தொழில் பாதுகாப்பு", q:"Factories' Ordinance Sri Lanka-ல் எந்த ஆண்டு இயற்றப்பட்டது?", opts:["1952","1942","1970","1980"], ans:1, exp:"Factories' Ordinance No.45 of 1942 - இலங்கையில் தொழிற்சாலை பாதுகாப்பு சட்டம்."},
+  {cat:"தொழில் பாதுகாப்பு", q:"Fire extinguisher Class C என்பது எந்த நெருப்புக்கு பயன்படுகிறது?", opts:["Wood/Paper","Electrical fires","Flammable liquids","Metal fires"], ans:1, exp:"Class C fire extinguisher electrical fires-க்கு பயன்படுகிறது - CO2 அல்லது dry powder பயன்படுகிறது."},
+  {cat:"தொழில் பாதுகாப்பு", q:"First aid-ல் CPR என்பதன் விரிவாக்கம் என்ன?", opts:["Central Pulse Rate","Cardiopulmonary Resuscitation","Cardiac Patient Response","Computer Physical Restart"], ans:1, exp:"CPR = Cardiopulmonary Resuscitation - இதய மற்றும் நுரையீரல் செயல்பாட்டை மீட்கும் முதல் உதவி."},
+  {cat:"தொழில் பாதுகாப்பு", q:"Ergonomics என்பது என்ன?", opts:["Computer performance","மனித உடலுக்கு பொருத்தமான பணி சூழல் வடிவமைப்பு","Network security","Software design"], ans:1, exp:"Ergonomics மனித உடல் தேவைகளுக்கு ஏற்ப work environment design செய்வது - health risk குறைக்கும்."},
+  {cat:"தொழில் பாதுகாப்பு", q:"PPE என்பதன் விரிவாக்கம் என்ன?", opts:["Personal Protection Equipment","Primary Power Extension","Peripheral Processing Element","Protocol Performance Evaluation"], ans:0, exp:"PPE = Personal Protective Equipment - கையுறை, கண்ணாடி, காலணி, தலைக்கவசம் போன்றவை."},
+
+  // ===== ENTREPRENEURSHIP =====
+  {cat:"தொழில்முனைவு", q:"கணினி பழுது நிறுவனம் தொடங்க முதலில் என்ன செய்ய வேண்டும்?", opts:["Tools வாங்க","Business registration and licensing","Office வாடகைக்கு எடுக்க","Advertisements"], ans:1, exp:"Business launching-ல் முதலில் Business registration மற்றும் licensing formalities பூர்த்தி செய்ய வேண்டும்."},
+  {cat:"தொழில்முனைவு", q:"Cash book என்பது என்ன?", opts:["Online banking","நாள்தோறும் பண வரவு செலவு பதிவு","Inventory list","Employee record"], ans:1, exp:"Cash book-ல் daily cash inflow மற்றும் outflow பதிவு செய்யப்படும் - basic accounting record."},
+  {cat:"தொழில்முனைவு", q:"Inventory control-ல் re-order point என்பது என்ன?", opts:["Maximum stock level","Stock-ஐ மீண்டும் order செய்ய வேண்டிய minimum level","Supplier list","Price list"], ans:1, exp:"Re-order point என்பது stock எந்த நிலையில் வரும்போது மீண்டும் order செய்ய வேண்டும் என்ற minimum level."},
+
+  // ===== NUMBER SYSTEMS =====
+  {cat:"எண் முறைகள்", q:"Binary 1010 என்பது decimal-ல் என்ன?", opts:["8","10","12","14"], ans:1, exp:"1010 binary = 1×8 + 0×4 + 1×2 + 0×1 = 8+2 = 10 decimal."},
+  {cat:"எண் முறைகள்", q:"Hexadecimal-ல் 'F' என்பது decimal-ல் என்ன?", opts:["14","15","16","17"], ans:1, exp:"Hexadecimal F = decimal 15. Hex uses 0-9 and A-F where A=10, B=11, C=12, D=13, E=14, F=15."},
+  {cat:"எண் முறைகள்", q:"1 Kilobyte = எத்தனை Bytes?", opts:["1000","1024","512","2048"], ans:1, exp:"1 KB = 1024 Bytes (2^10). Computer storage binary system பயன்படுத்துகிறது."},
+  {cat:"எண் முறைகள்", q:"ASCII என்பது எதற்காக பயன்படுகிறது?", opts:["Image encoding","Characters-ஐ numbers-ஆக represent செய்ய","Video compression","Network protocol"], ans:1, exp:"ASCII (American Standard Code for Information Interchange) text characters-ஐ numerical values-ஆக represent செய்யும்."},
+  {cat:"எண் முறைகள்", q:"1 GB = எத்தனை MB?", opts:["100","512","1000","1024"], ans:3, exp:"1 GB = 1024 MB (binary). SI standard படி 1 GB = 1000 MB ஆனால் computer storage-ல் 1024 MB."},
+
+  // ===== ADVANCED NETWORKING =====
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"SSID என்பது என்ன?", opts:["Server IP ID","Wireless network name","Switch Serial ID","System Security ID"], ans:1, exp:"SSID (Service Set Identifier) wireless network-ன் பெயர் - Wi-Fi connection list-ல் காணப்படும்."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"Default gateway என்பது என்ன?", opts:["Local printer IP","Router IP address (internet access)","DNS server","Firewall"], ans:1, exp:"Default gateway LAN-லிருந்து internet-க்கு செல்ல traffic அனுப்பும் router IP address."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"MAC address என்பது என்ன?", opts:["Mathematical Access Code","Media Access Control address (hardware unique ID)","Memory Access Cache","Modular Application Connection"], ans:1, exp:"MAC address network card-ல் manufacturer பதிக்கும் 48-bit unique hardware address."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"VLAN என்பது என்ன செய்கிறது?", opts:["Virtual Local Area Network - logical network segmentation","Video Local Area Network","Very Large Area Network","Virtual LAN Adapter"], ans:0, exp:"VLAN physical network-ஐ logical segments-ஆக பிரிக்கும், security மற்றும் traffic management மேம்படும்."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"Cat6 cable-ஐ Cat5e-விட சிறந்தது ஏன்?", opts:["குறைந்த விலை","Higher bandwidth (10Gbps), better noise immunity","மெல்லியது","நீண்ட distance"], ans:1, exp:"Cat6 10Gbps up to 55m, better crosstalk protection. Cat5e 1Gbps. Cat6 professional installations-க்கு ஏற்றது."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"Port 80 எந்த protocol-க்கு பயன்படுகிறது?", opts:["FTP","HTTP","SSH","SMTP"], ans:1, exp:"Port 80 HTTP (Hypertext Transfer Protocol) - web traffic-க்கு பயன்படுகிறது. HTTPS port 443."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"SSH என்பதன் விரிவாக்கம் என்ன?", opts:["Secure Shell","Simple Service Host","Server Side Hub","System Security Handshake"], ans:0, exp:"SSH = Secure Shell - encrypted remote access protocol, port 22 பயன்படுகிறது."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"Biometric device என்பதற்கு எடுத்துக்காட்டு என்ன?", opts:["Barcode scanner","Fingerprint scanner, iris reader","Keyboard","Mouse"], ans:1, exp:"Biometric devices fingerprint, iris, face recognition போன்ற biological characteristics பயன்படுத்தி authentication செய்யும்."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"Cloud computing-ல் IaaS என்பது என்ன?", opts:["Infrastructure as a Service","Internet as a Service","Internal Application Service","Interface Access System"], ans:0, exp:"IaaS = Infrastructure as a Service - virtual machines, storage, networking cloud-ல் வழங்குவது (AWS EC2 போன்றவை)."},
+
+  // ===== OS & SOFTWARE =====
+  {cat:"இயக்க முறைமை", q:"Linux-ல் root user என்பது என்ன?", opts:["Regular user","Super user (full system access)","Guest user","Network user"], ans:1, exp:"Linux-ல் root user administrative privileges கொண்ட super user - system-wide changes செய்ய முடியும்."},
+  {cat:"இயக்க முறைமை", q:"Registry என்பது எந்த OS-ல் உள்ளது?", opts:["Linux","macOS","Windows","Android"], ans:2, exp:"Windows Registry system மற்றும் application settings store செய்யும் hierarchical database."},
+  {cat:"இயக்க முறைமை", q:"CLI என்பதன் விரிவாக்கம் என்ன?", opts:["Computer Language Interface","Command Line Interface","Central Logic Instruction","Circuit Level Integration"], ans:1, exp:"CLI = Command Line Interface - text commands மூலம் OS-உடன் interact செய்யும் interface."},
+  {cat:"இயக்க முறைமை", q:"Safe Mode என்பது என்ன செய்கிறது?", opts:["Fast boot","Minimum drivers மட்டும் load செய்து boot","High performance","Network disable"], ans:1, exp:"Safe Mode Windows-ஐ minimum necessary programs மட்டும் load செய்து boot செய்யும், troubleshooting-க்கு பயன்படும்."},
+  {cat:"இயக்க முறைமை", q:"Defragmentation என்பது என்ன?", opts:["Virus removal","HDD-ல் fragmented files-ஐ arrange செய்யும்","System update","Driver install"], ans:1, exp:"Defragmentation HDD-ல் scattered file fragments-ஐ contiguous-ஆக arrange செய்யும், performance மேம்படும் (SSD-க்கு தேவையில்லை)."},
+  {cat:"இயக்க முறைமை", q:"Task Manager-ல் என்ன செய்யலாம்?", opts:["Format disk","Running processes, CPU/RAM usage monitor","Install software","Change IP"], ans:1, exp:"Task Manager running processes, CPU, RAM, disk, network usage monitor செய்யலாம், unresponsive apps end செய்யலாம்."},
+  {cat:"இயக்க முறைமை", q:"Windows Event Viewer எதற்காக பயன்படுகிறது?", opts:["Video playback","System logs, errors, warnings view செய்ய","Game settings","Network setup"], ans:1, exp:"Event Viewer system events, errors, security logs பதிவு செய்து view செய்ய பயன்படும் - troubleshooting-க்கு மிக முக்கியம்."},
+  {cat:"இயக்க முறைமை", q:"System Restore Point எவ்வாறு உதவுகிறது?", opts:["Data backup","கணினியை முந்தைய நிலைக்கு கொண்டு செல்ல","Speed increase","Virus remove"], ans:1, exp:"System Restore Point கணினியை சிக்கல் ஏற்படுவதற்கு முந்தைய நிலைக்கு (OS settings, registry) கொண்டு செல்லும்."},
+
+  // ===== TROUBLESHOOTING =====
+  {cat:"கோளாறு கண்டறிதல்", q:"POST-ல் 1 long beep + 2 short beeps எதை குறிக்கிறது?", opts:["RAM error","GPU/Video error","CPU error","HDD error"], ans:1, exp:"1 long + 2 short beeps பொதுவாக GPU/Video card error-ஐ குறிக்கும் (AMI BIOS)."},
+  {cat:"கோளாறு கண்டறிதல்", q:"BSOD (Blue Screen of Death) காரணம் என்ன?", opts:["Software bugs மட்டும்","Hardware failure அல்லது driver issues","Internet problem","Battery low"], ans:1, exp:"BSOD critical hardware failure, driver incompatibility, memory errors, system file corruption காரணமாக ஏற்படும்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"கணினி திடீரென் restart ஆனால் என்ன காரணமாக இருக்கலாம்?", opts:["Keyboard failure","Overheating அல்லது PSU failure","Mouse problem","Monitor issue"], ans:1, exp:"திடீர் restart பொதுவாக CPU/GPU overheating, PSU failure, hardware driver crashes காரணமாக ஏற்படும்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"No display but computer boots என்றால் முதலில் என்ன சோதிக்க வேண்டும்?", opts:["OS reinstall","Monitor connection, GPU seated properly","Format HDD","Change RAM"], ans:1, exp:"No display ஆனால் boot sounds இருந்தால் monitor cable, GPU connection, monitor power சோதிக்க வேண்டும்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"HDD failure-ஐ கண்டறிய எந்த tool பயன்படுகிறது?", opts:["Device Manager","S.M.A.R.T. diagnostics","Task Manager","Registry Editor"], ans:1, exp:"S.M.A.R.T. (Self-Monitoring Analysis and Reporting Technology) HDD health மற்றும் potential failure கண்டறியும்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"Printer not printing ஆனால் light on என்றால் முதலில் என்ன சோதிக்க வேண்டும்?", opts:["Buy new printer","Print queue, driver, connection check","Replace toner","Restart computer only"], ans:1, exp:"Print queue stuck jobs, driver issues, USB/network connection, printer offline status முதலில் சோதிக்க வேண்டும்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"RAM problem-ஐ கண்டறிய எந்த Windows tool பயன்படுகிறது?", opts:["Disk Check","Windows Memory Diagnostic","Device Manager","System Restore"], ans:1, exp:"Windows Memory Diagnostic tool RAM errors சோதிக்கும் - mdsched.exe run செய்யலாம்."},
+  {cat:"கோளாறு கண்டறிதல்", q:"கணினி slow ஆனால் virus இல்லை என்றால் முக்கிய காரணம் என்ன?", opts:["Monitor issue","RAM குறைவு அல்லது HDD நிரம்பியது","Keyboard problem","Power issue"], ans:1, exp:"System slow-க்கு insufficient RAM, full HDD/SSD, too many startup programs, high background processes காரணமாக இருக்கலாம்."},
+
+  // ===== COMMUNICATION =====
+  {cat:"தகவல் தொடர்பு", q:"Workplace communication-ல் active listening என்பது என்ன?", opts:["Interrupting frequently","கவனமாக கேட்டு புரிந்துகொள்வது","Note taking only","Quick response"], ans:1, exp:"Active listening speaker-ஐ கவனமாக கேட்டு, புரிந்துகொண்டு, தகுந்த முறையில் respond செய்வது."},
+  {cat:"தகவல் தொடர்பு", q:"Customer-உடன் technical issue discuss செய்யும்போது என்ன கவனிக்க வேண்டும்?", opts:["Technical jargon அதிகம் பயன்படுத்த","எளிய மொழியில் தெளிவாக விளக்க","விரைவாக முடிக்க","மட்டும் SMS அனுப்ப"], ans:1, exp:"வாடிக்கையாளர் technical expert இல்லாவிட்டால் எளிய, clear மொழியில் விளக்க வேண்டும்."},
+
+  // ===== ADVANCED HARDWARE =====
+  {cat:"மேம்பட்ட வன்பொருள்", q:"Thermal throttling என்பது என்ன?", opts:["Cooling fan speed increase","CPU-வின் overheat தடுக்க speed தானாக குறைவது","Thermal compound replace","Case fan add"], ans:1, exp:"Thermal throttling CPU/GPU overheat ஆகும்போது damage தடுக்க automatically performance/speed குறைக்கும் mechanism."},
+  {cat:"மேம்பட்ட வன்பொருள்", q:"RAID 1 என்பது என்ன?", opts:["Data striping","Data mirroring (exact copy on 2 drives)","Data parity","Combining drives"], ans:1, exp:"RAID 1 (Mirroring) data-ஐ two drives-ல் exactly copy செய்யும், one drive fail ஆனாலும் data safe."},
+  {cat:"மேம்பட்ட வன்பொருள்", q:"PCIe Gen 4-ஐ Gen 3-விட சிறந்தது ஏன்?", opts:["குறைந்த விலை","Double bandwidth (16 GT/s vs 8 GT/s)","Less power","More slots"], ans:1, exp:"PCIe Gen 4 Gen 3-ஐ விட double bandwidth கொண்டது, NVMe SSDs மற்றும் GPUs இதன் நன்மை பெறும்."},
+  {cat:"மேம்பட்ட வன்பொருள்", q:"Laptop battery calibration ஏன் செய்ய வேண்டும்?", opts:["Fast charging","Accurate battery percentage display","Reduce heat","Increase capacity"], ans:1, exp:"Battery calibration laptop-ல் battery percentage accurately display ஆக - பழைய batteries-க்கு மிக முக்கியம்."},
+
+  // ===== PRINTER & PERIPHERALS =====
+  {cat:"சாதனங்கள்", q:"Inkjet printer vs Laser printer - text printing-க்கு எது சிறந்தது?", opts:["Inkjet","Laser","இரண்டும் சமம்","Dot matrix"], ans:1, exp:"Laser printer text printing-க்கு வேகமானது, குறைந்த per-page cost, dry toner water-proof. Inkjet photos-க்கு சிறந்தது."},
+  {cat:"சாதனங்கள்", q:"Scanner DPI என்பது என்ன?", opts:["Digital Print Interface","Dots Per Inch (image resolution)","Data Processing Index","Display Pixel Intensity"], ans:1, exp:"DPI = Dots Per Inch - scanner/printer resolution measure. அதிக DPI = அதிக detail மற்றும் clarity."},
+  {cat:"சாதனங்கள்", q:"Projector lumens என்பது என்ன அளக்கிறது?", opts:["Resolution","Brightness","Contrast","Color depth"], ans:1, exp:"Lumens projector-ன் brightness அளவிடும். அதிக lumens = பிரகாசமான சூழலிலும் clear image."},
+  {cat:"சாதனங்கள்", q:"USB 3.0 data transfer speed என்ன?", opts:["480 Mbps","5 Gbps","10 Gbps","40 Gbps"], ans:1, exp:"USB 3.0 (SuperSpeed) 5 Gbps transfer speed. USB 2.0 480 Mbps. USB 3.2 Gen 2 10 Gbps."},
+  {cat:"சாதனங்கள்", q:"Wireless mouse-ல் எந்த technology பயன்படுகிறது?", opts:["Bluetooth அல்லது 2.4GHz RF","Infrared only","Wi-Fi 6","NFC"], ans:0, exp:"Wireless mouse Bluetooth அல்லது 2.4GHz RF (USB dongle) technology பயன்படுத்துகிறது."},
+
+  // ===== ADDITIONAL ADVANCED =====
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"Dual channel RAM என்பது எவ்வாறு performance மேம்படுத்துகிறது?", opts:["More storage","Two RAM sticks work in parallel, double bandwidth","Lower latency","Faster clock speed"], ans:1, exp:"Dual channel mode இரண்டு RAM sticks parallel-ல் work செய்வதால் memory bandwidth double ஆகிறது."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"Overclocking என்பது என்ன?", opts:["Component cooling","Factory speed-ஐ விட அதிக speed-ல் CPU/GPU இயக்குவது","Driver update","BIOS reset"], ans:1, exp:"Overclocking CPU/GPU-ஐ manufacturer specified speed-ஐ விட அதிக frequency-ல் இயக்குவது - extra cooling தேவை."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"Data encryption என்பது என்ன செய்கிறது?", opts:["Data delete","Data scramble செய்து unauthorized access தடுக்கும்","Data compress","Data backup"], ans:1, exp:"Encryption data-ஐ algorithm பயன்படுத்தி scramble செய்து authorized users மட்டும் read செய்ய முடியும்."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"LEED certification எதனை குறிக்கிறது?", opts:["Local Energy Efficient Design","Leadership in Energy and Environmental Design","Large Enterprise Energy Data","Low Emission Electronic Device"], ans:1, exp:"LEED = Leadership in Energy and Environmental Design - buildings மற்றும் facilities-க்கு green certification."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"IoT என்பதன் விரிவாக்கம் என்ன?", opts:["Internal Office Technology","Internet of Things","Integrated Output Tool","Intelligent Operating Terminal"], ans:1, exp:"IoT = Internet of Things - internet-உடன் connected physical devices network (smart home, sensors போன்றவை)."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"Green software development-ல் முக்கிய கவலை என்ன?", opts:["Faster code","Energy consumption குறைத்து efficient code எழுதுவது","More features","Better UI"], ans:1, exp:"Green software development code-ன் energy consumption குறைப்பதில் focus செய்யும் - efficient algorithms, less CPU usage."},
+
+  // ===== MORE NETWORKING =====
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"FTP port number என்ன?", opts:["21","22","23","25"], ans:0, exp:"FTP (File Transfer Protocol) port 21 (control) மற்றும் port 20 (data) பயன்படுத்துகிறது."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"SMTP எதற்காக பயன்படுகிறது?", opts:["Web browsing","Email sending","File transfer","DNS lookup"], ans:1, exp:"SMTP (Simple Mail Transfer Protocol) port 25/587 - email அனுப்ப பயன்படுகிறது."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"Access Point (AP) என்பது என்ன செய்கிறது?", opts:["Wired network extend","Wireless network connection provide","DNS resolve","IP assign"], ans:1, exp:"Wireless Access Point (WAP) devices-க்கு Wi-Fi connectivity provide செய்து wired network-உடன் connect செய்யும்."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"Network cable crimp செய்ய எந்த tool பயன்படுகிறது?", opts:["Wire stripper","Crimping tool","Screwdriver","Pliers"], ans:1, exp:"RJ-45 jack-ஐ Cat5e/Cat6 cable-ல் crimp செய்ய crimping tool (RJ-45 crimper) பயன்படுகிறது."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"Network cable tester என்ன செய்கிறது?", opts:["Speed test","Cable connectivity மற்றும் wiring order சோதிக்கும்","IP assign","DNS test"], ans:1, exp:"Cable tester network cable properly crimped, all wires connected correctly என்று சோதிக்கும்."},
+
+  // ===== WINDOWS SPECIFIC =====
+  {cat:"Windows OS", q:"Windows-ல் ipconfig command என்ன காட்டும்?", opts:["Browser history","IP address, subnet mask, gateway","Installed software","User accounts"], ans:1, exp:"ipconfig command current network configuration (IP, subnet mask, default gateway, MAC) காட்டும்."},
+  {cat:"Windows OS", q:"Windows Defender என்பது என்ன?", opts:["File manager","Built-in antivirus/anti-malware","Backup tool","Update manager"], ans:1, exp:"Windows Defender Microsoft-ன் built-in security software - real-time malware protection வழங்கும்."},
+  {cat:"Windows OS", q:"chkdsk command என்ன செய்கிறது?", opts:["Check RAM","Disk errors scan மற்றும் fix செய்யும்","Network test","System restore"], ans:1, exp:"chkdsk (Check Disk) HDD/SSD-ல் file system errors, bad sectors scan செய்யும்."},
+  {cat:"Windows OS", q:"msconfig என்பது என்ன tool?", opts:["Microsoft Configuration - startup, services manage","MS Word config","Mouse settings","Screen config"], ans:0, exp:"msconfig (System Configuration) startup programs, services, boot options manage செய்ய பயன்படும்."},
+
+  // ===== EVEN MORE QUESTIONS =====
+  {cat:"கணினி அடிப்படைகள்", q:"Volatile memory என்பது என்ன?", opts:["Power இருக்கும் வரை மட்டும் data store செய்யும்","Always store data","Long-term storage","Read-only memory"], ans:0, exp:"Volatile memory (RAM) power off ஆனால் data தொலையும். Non-volatile (HDD, SSD, ROM) power இல்லாமலும் data keep செய்யும்."},
+  {cat:"கணினி அடிப்படைகள்", q:"ROM என்பதன் விரிவாக்கம் என்ன?", opts:["Random Output Memory","Read Only Memory","Rapid Operating Memory","Remote Object Memory"], ans:1, exp:"ROM = Read Only Memory - factory-ல் write செய்யப்படும், power off ஆனாலும் data maintain."},
+  {cat:"கணினி அடிப்படைகள்", q:"64-bit OS vs 32-bit OS-ல் என்ன வித்தியாசம்?", opts:["Speed மட்டும்","Max RAM support: 64-bit 4GB+, 32-bit max 4GB","Color depth","HDD size"], ans:1, exp:"64-bit OS 4GB-க்கு அதிகமான RAM support செய்யும், 32-bit maximum 4GB RAM மட்டுமே use செய்யலாம்."},
+  {cat:"மென்பொருள் நிறுவல்", q:"Driver signing என்பது என்ன?", opts:["Digital signature that driver is authentic and tested","Driver installation speed","License key","Hardware ID"], ans:0, exp:"Driver signing Microsoft-ஆல் verify செய்யப்பட்ட, safe driver என்று digital signature கொண்டது."},
+  {cat:"கோளாறு சரிசெய்தல்", q:"Preventive Maintenance vs Corrective Maintenance வித்தியாசம் என்ன?", opts:["விலை வித்தியாசம்","PM சிக்கல் வருவதற்கு முன் செய்வது, CM வந்த பின் சரிசெய்வது","Speed வித்தியாசம்","எந்த வித்தியாசமும் இல்லை"], ans:1, exp:"Preventive Maintenance proactively சிக்கல் தடுக்கும், Corrective Maintenance fault ஏற்பட்ட பின் சரிசெய்யும்."},
+  {cat:"வலையமைப்பு", q:"Bandwidth vs Throughput வித்தியாசம் என்ன?", opts:["இரண்டும் ஒன்றே","Bandwidth max theoretical speed, Throughput actual speed","Throughput faster","Bandwidth practical"], ans:1, exp:"Bandwidth maximum theoretical capacity, Throughput actual data transfer rate (always less than bandwidth)."},
+  {cat:"இணைய பாதுகாப்பு", q:"Zero-day vulnerability என்பது என்ன?", opts:["Old security bug","Software vendor-க்கே தெரியாத, patch இல்லாத security flaw","Hardware issue","Network problem"], ans:1, exp:"Zero-day vulnerability vendor-க்கு தெரியாத, patch release ஆகாத software flaw - attackers first exploit செய்வார்கள்."},
+  {cat:"Green IT", q:"Server virtualization-ல் hypervisor என்பது என்ன?", opts:["Hardware component","Multiple VMs manage செய்யும் software layer","Network switch","Storage device"], ans:1, exp:"Hypervisor (VMM) physical hardware-ல் multiple virtual machines create மற்றும் manage செய்யும் software."},
+  {cat:"கணினி கூறுகள்", q:"What is TDP in processors?", opts:["Total Data Processing","Thermal Design Power - heat processor generates","Transfer Data Protocol","Total Drive Performance"], ans:1, exp:"TDP (Thermal Design Power) processor maximum heat output watts-ல், cooling solution design-க்கு guide ஆகும்."},
+  {cat:"வலையமைப்பு மேம்பட்ட", q:"QoS (Quality of Service) என்பது என்ன செய்கிறது?", opts:["Network speed increase","Traffic prioritize செய்யும்","Security provide","IP assign"], ans:1, exp:"QoS network traffic types-ஐ prioritize செய்யும் (video calls > file downloads), bandwidth manage செய்யும்."},
+
+  // ===== FINAL BATCH =====
+  {cat:"தொழில் பாதுகாப்பு", q:"ESD damage எவ்வளவு voltage-ல் ஏற்படலாம்?", opts:["1000V+","Even 10-100V can damage sensitive components","500V மட்டும்","No voltage limit"], ans:1, exp:"ESD sensitive components-ஐ 10-100V மட்டும் இருந்தாலும் damage செய்யலாம், human body 1000V+ feel செய்யும்."},
+  {cat:"தொழில் பாதுகாப்பு", q:"Chemical spill workplace-ல் ஏற்பட்டால் முதலில் என்ன செய்ய வேண்டும்?", opts:["Continue working","Area evacuate, MSDS check, emergency contact","Clean உடனே","Report மட்டும்"], ans:1, exp:"Chemical spill - area clear செய்து, MSDS படி handle செய்து, emergency contacts inform செய்ய வேண்டும்."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"Government procurement guidelines ஏன் முக்கியம்?", opts:["Marketing-க்கு","அரசு திட்டங்களுக்கு சட்டப்பூர்வ compliance-க்காக","வாடிக்கையாளர் satisfaction-க்கு","Inventory management-க்கு"], ans:1, exp:"Government contracts-க்கு procurement guidelines follow செய்வது mandatory - transparency மற்றும் legal compliance."},
+  {cat:"கணினி அமைவு", q:"Clean installation vs Upgrade installation வித்தியாசம் என்ன?", opts:["விலை வித்தியாசம்","Clean = everything erase, fresh install; Upgrade = keep files/apps","Speed வித்தியாசம்","எந்த வித்தியாசமும் இல்லை"], ans:1, exp:"Clean install existing data erase செய்து fresh OS install செய்யும். Upgrade install files, apps, settings keep செய்யும்."},
+  {cat:"இயக்க முறைமை", q:"Pagefile.sys என்பது என்ன?", opts:["System backup file","Virtual memory file (RAM extension)","Virus file","System config"], ans:1, exp:"Pagefile.sys Windows virtual memory file - RAM நிரம்பும்போது HDD/SSD-ஐ temporary RAM ஆக பயன்படுத்தும்."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"Hot-swappable என்பது என்ன?", opts:["High temperature resistant","Power off செய்யாமல் device swap செய்யலாம்","Fast charging","Remote access"], ans:1, exp:"Hot-swappable system running-ஆக இருக்கும்போதே device remove/insert செய்யலாம் - USB, SATA hot-swap ports."},
+  {cat:"வலையமைப்பு", q:"Wireless N vs Wireless AC வித்தியாசம் என்ன?", opts:["Color difference","AC faster (WiFi 5), better range, MU-MIMO support","N more secure","AC more expensive only"], ans:1, exp:"802.11ac (WiFi 5) 802.11n-ஐ விட faster speeds, better efficiency, MU-MIMO multiple device simultaneous support."},
+  {cat:"கணினி கூறுகள்", q:"Form factor ATX vs mATX வித்தியாசம் என்ன?", opts:["Performance difference","Physical size (ATX larger, more expansion slots)","Power difference","Speed difference"], ans:1, exp:"ATX full-size (305×244mm), more expansion slots. mATX smaller (244×244mm), fewer slots, compact builds-க்கு."},
+  {cat:"தொழில்முனைவு", q:"SLA என்பதன் விரிவாக்கம் என்ன?", opts:["Software License Agreement","Service Level Agreement","System Launch Arrangement","Software Licensing Act"], ans:1, exp:"SLA = Service Level Agreement - service provider மற்றும் customer-க்கு இடையே service quality, uptime guarantees பற்றிய agreement."},
+  {cat:"மேம்பட்ட வன்பொருள்", q:"POST beep sounds கேட்க எந்த component தேவை?", opts:["GPU","PC Speaker / buzzer","Monitor","Headphone"], ans:1, exp:"POST beep codes-ஐ கேட்க internal PC speaker அல்லது case buzzer தேவை."},
+  {cat:"கோளாறு கண்டறிதல்", q:"Network connectivity issue troubleshoot செய்ய command prompt-ல் முதலில் என்ன செய்வீர்கள்?", opts:["Format disk","ipconfig, ping 127.0.0.1 (loopback test)","Restart browser","Change DNS"], ans:1, exp:"Network troubleshoot: 1.ipconfig (IP check) 2.ping 127.0.0.1 (local TCP/IP) 3.ping gateway 4.ping external."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"Network documentation ஏன் முக்கியம்?", opts:["Legal requirement","Future troubleshooting, expansion, maintenance-க்கு உதவும்","Customer satisfaction","Marketing purpose"], ans:1, exp:"Network documentation future maintenance, troubleshooting, upgrades, new technician onboarding-க்கு essential."},
+  {cat:"Green IT", q:"Paperless office concept-ல் என்ன பயன்படுகிறது?", opts:["More printers","Digital documents, cloud storage, e-signatures","Recycled paper","Color printing"], ans:1, exp:"Paperless office digital documents, cloud storage, e-signatures, electronic workflows பயன்படுத்தி paper use குறைக்கும்."},
+  {cat:"இணைய பாதுகாப்பு", q:"Honeypot என்பது என்ன?", opts:["Sweet food","Attackers-ஐ ஈர்க்க வடிவமைக்கப்பட்ட decoy system","Firewall type","Antivirus"], ans:1, exp:"Honeypot attackers-ஐ கவர வடிவமைக்கப்பட்ட decoy system - attack methods study செய்ய, real systems protect செய்ய."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"ITIL என்பது என்ன?", opts:["IT Infrastructure Library - IT service management best practices","International Technology Institute","Information Technology Innovation Lab","Integrated Technology Integration Language"], ans:0, exp:"ITIL = IT Infrastructure Library - IT service management best practices framework, globally recognized."},
+  {cat:"கணினி கூறுகள்", q:"Integrated graphics vs Dedicated graphics வித்தியாசம் என்ன?", opts:["Price only","Integrated uses CPU+shared RAM, Dedicated has own GPU chip+VRAM","Speed only","Brand difference"], ans:1, exp:"Integrated graphics CPU-ல் built-in, shared RAM use. Dedicated graphics card own GPU processor மற்றும் VRAM கொண்டது, gaming/rendering சிறந்தது."},
+  {cat:"Windows OS", q:"BitLocker என்பது என்ன செய்கிறது?", opts:["Disk cleanup","Full disk encryption","Antivirus","Backup"], ans:1, exp:"BitLocker Windows Pro/Enterprise-ல் full disk encryption feature - data theft தடுக்கும்."},
+  {cat:"கணினி அடிப்படைகள்", q:"Analog vs Digital signal வித்தியாசம் என்ன?", opts:["Speed வித்தியாசம்","Analog continuous, Digital discrete 0/1 values","Color வித்தியாசம்","எந்த வித்தியாசமும் இல்லை"], ans:1, exp:"Analog signal continuous wave (sound, temperature). Digital signal discrete binary values (0/1), noise resistant."},
+  {cat:"தகவல் தொடர்பு", q:"Email-ல் CC மற்றும் BCC வித்தியாசம் என்ன?", opts:["இரண்டும் ஒன்றே","CC - all recipients see, BCC - hidden from other recipients","CC faster","BCC more secure"], ans:1, exp:"CC (Carbon Copy) - all recipients see each other's addresses. BCC (Blind Carbon Copy) - recipients hidden from each other."},
+  {cat:"தொழில் பாதுகாப்பு", q:"Ergonomic keyboard/mouse ஏன் பயன்படுகிறது?", opts:["Faster typing","Repetitive strain injury (RSI) தடுக்க","Gaming","Aesthetics"], ans:1, exp:"Ergonomic peripherals wrist, hand position natural-ஆக வைக்க help செய்யும், RSI (Carpal Tunnel) போன்ற injuries தடுக்கும்."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"Tender procedure என்பது என்ன?", opts:["Fast purchase","Multiple vendors-கிடமிருந்து competitive bids கோருவது","Single vendor","Direct purchase"], ans:1, exp:"Tender procedure large purchases-க்கு multiple vendors-ஐ competitive bids submit செய்ய அழைத்து best offer select செய்வது."},
+  {cat:"வலையமைப்பு மேம்பட்ட 2", q:"Wi-Fi 6 (802.11ax) முக்கிய நன்மை என்ன?", opts:["Only speed","OFDMA, MU-MIMO - many devices simultaneously efficient handle","Range increase","Security increase only"], ans:1, exp:"Wi-Fi 6 OFDMA, MU-MIMO, BSS Coloring மூலம் crowded environments-ல் many simultaneous devices efficient handling."},
+  {cat:"கோளாறு கண்டறிதல்", q:"Driver rollback என்பது என்ன?", opts:["Delete driver","Update driver","Previous version driver-க்கு திரும்புவது","Format and reinstall"], ans:2, exp:"Driver rollback new driver சிக்கல் ஏற்படுத்தினால் Device Manager மூலம் previous working version-க்கு revert செய்வது."},
+  {cat:"Green IT", q:"Sustainable AI என்பது என்ன குறிக்கிறது?", opts:["Cheaper AI","Energy efficient AI training, eco-friendly data centers","Faster AI","Smaller models"], ans:1, exp:"Sustainable AI energy-efficient training methods, renewable energy powered data centers, reduced carbon footprint AI systems."},
+  {cat:"மேம்பட்ட வன்பொருள்", q:"Laptop battery types: Li-Ion vs Li-Po வித்தியாசம் என்ன?", opts:["Capacity only","Li-Po flexible form factor, lighter; Li-Ion cylindrical, more common","Voltage difference","Price only"], ans:1, exp:"Li-Po (Lithium Polymer) flexible/thin form factor, modern laptops favor. Li-Ion cylindrical, widely used, mature technology."},
+  {cat:"வலையமைப்பு", q:"Port forwarding என்பது என்ன?", opts:["Speed increase","Router-ல் specific ports-ஐ internal devices-க்கு redirect செய்வது","Security feature","DNS setting"], ans:1, exp:"Port forwarding external internet traffic specific port-ஐ internal network device-க்கு direct செய்யும் (gaming servers, remote access)."},
+  {cat:"இயக்க முறைமை", q:"Linux-ல் sudo என்பது என்ன செய்கிறது?", opts:["Delete files","Admin/root privileges-உடன் command execute செய்ய","Network connect","Update software"], ans:1, exp:"sudo (superuser do) regular user temporary root/admin privileges-உடன் specific command execute செய்ய அனுமதிக்கும்."},
+  {cat:"கணினி கூறுகள்", q:"What is the purpose of SATA data cable?", opts:["Power supply","Motherboard-க்கும் HDD/SSD/Optical drive-க்கும் data transfer","RAM connection","GPU connection"], ans:1, exp:"SATA data cable storage devices (HDD, SSD, Optical drives)-ஐ motherboard SATA controller-உடன் connect செய்யும்."},
+  {cat:"மேம்பட்ட கருத்துக்கள்", q:"NCS-ல் (K72S001) NVQ Level 4 qualification-க்கு எத்தனை hours training?", opts:["588 hours","720 hours","600 hours","480 hours"], ans:1, exp:"NVQ Level 4 Computer Hardware Technician (K72S001Q2L4) - 720 hours total training (300 theory + 420 practical)."},
+  {cat:"மதிப்பீடு & விலைப்பட்டியல்", q:"Professional fee என்பது cost elements-ல் என்ன?", opts:["Material cost","தொழில் நிபுணர் சேவைக்கான கட்டணம்","Transport cost","Government tax"], ans:1, exp:"Professional fee specialized technical expertise அல்லது consulting services-க்கான charge - eg: network design consultant."},
+  {cat:"தொழில்முனைவு", q:"Break-even point என்பது என்ன?", opts:["Maximum profit point","Revenue = Total cost (நஷ்டமும் இல்லை, லாபமும் இல்லை)","Minimum revenue","Tax point"], ans:1, exp:"Break-even point total revenue total costs-க்கு equal ஆகும் point - இதற்கு மேல் profit, கீழே loss."},
+  {cat:"கணினி அடிப்படைகள்", q:"Unicode என்பது ASCII-விட சிறந்தது ஏன்?", opts:["Faster processing","All world languages characters support (128K+ characters)","Less storage","Better graphics"], ans:1, exp:"Unicode (UTF-8, UTF-16) world's all languages, symbols support செய்யும். ASCII only 128 English characters support."},
+  {cat:"இணைய பாதுகாப்பு", q:"Penetration testing என்பது என்ன?", opts:["Network speed test","Authorized simulated attacks to find vulnerabilities","Virus scanning","Hardware test"], ans:1, exp:"Penetration testing (ethical hacking) authorized security professionals system vulnerabilities கண்டறிய simulated attacks செய்வது."},
+];
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let wrong = 0;
+let answered = false;
+let timerInterval = null;
+let timeLeft = 0;
+let mode = '';
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz(m) {
+  mode = m;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizMain').classList.add('show');
+
+  let questions = shuffle([...allQuestions]);
+  if (m === 'exam') { currentQuestions = questions.slice(0, 50); timeLeft = 3600; }
+  else if (m === 'quick') { currentQuestions = questions.slice(0, 25); timeLeft = 1200; }
+  else { currentQuestions = questions; timeLeft = 0; }
+
+  currentIndex = 0; score = 0; wrong = 0;
+  if (timeLeft > 0) startTimer();
+  else document.getElementById('timerVal').textContent = '∞';
+  showQuestion();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    const el = document.getElementById('timerVal');
+    el.textContent = m + ':' + s;
+    el.className = 'timer-val' + (timeLeft < 60 ? ' danger' : '');
+    if (timeLeft <= 0) { clearInterval(timerInterval); showResult(); }
+  }, 1000);
+}
+
+function showQuestion() {
+  if (currentIndex >= currentQuestions.length) { showResult(); return; }
+  answered = false;
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+  const pct = (currentIndex / total) * 100;
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = currentIndex + ' / ' + total + ' முடிந்தது';
+  document.getElementById('statQ').textContent = (currentIndex + 1) + '/' + total;
+  document.getElementById('statC').textContent = score;
+  document.getElementById('statW').textContent = wrong;
+
+  const labels = ['அ', 'ஆ', 'இ', 'ஈ'];
+  const optHTML = q.opts.map((opt, i) =>
+    `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="opt-label">${labels[i]})</span>
+      <span>${opt}</span>
+    </button>`
+  ).join('');
+
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-number">வினா ${currentIndex + 1} / ${total}</span>
+        <span class="q-category">${q.cat}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optHTML}</div>
+      <div class="explanation" id="explanation">
+        <strong>விளக்கம்:</strong> ${q.exp}
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">
+        ${currentIndex + 1 < currentQuestions.length ? 'அடுத்த வினா →' : '✓ முடிவு காண்க'}
+      </button>
+    </div>
+  `;
+}
+
+function selectAnswer(selected) {
+  if (answered) return;
+  answered = true;
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === selected && i !== q.ans) btn.classList.add('wrong');
+  });
+
+  if (selected === q.ans) score++;
+  else wrong++;
+
+  document.getElementById('statC').textContent = score;
+  document.getElementById('statW').textContent = wrong;
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function nextQuestion() {
+  currentIndex++;
+  showQuestion();
+}
+
+function showResult() {
+  clearInterval(timerInterval);
+  document.getElementById('quizMain').classList.remove('show');
+  const rs = document.getElementById('resultScreen');
+  rs.classList.add('show');
+  rs.style.display = 'block';
+
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+  document.getElementById('resScore').textContent = score;
+  document.getElementById('resTotal').textContent = '/ ' + total;
+
+  let grade, msg, color;
+  if (pct >= 80) { grade = '🏆 சிறப்பு! தேர்ச்சி!'; msg = 'நீங்கள் NVQ 4 தேர்வுக்கு தயார்!'; color = '#10b981'; }
+  else if (pct >= 60) { grade = '👍 நல்லது!'; msg = 'சற்று மேலும் பயிற்சி தேவை.'; color = '#f59e0b'; }
+  else { grade = '📖 மேலும் படிக்க வேண்டும்'; msg = 'மீண்டும் முயற்சி செய்யுங்கள்!'; color = '#ef4444'; }
+
+  document.getElementById('resGrade').innerHTML = `<span style="color:${color}">${grade}</span>`;
+  document.getElementById('resMsg').innerHTML = `${msg}<br><br>
+    <strong style="color:var(--accent)">${pct}%</strong> சரியான விடைகள் | 
+    <strong style="color:var(--green)">${score}</strong> சரி | 
+    <strong style="color:var(--red)">${wrong}</strong> தவறு`;
+}
+
+function restartSame() {
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('resultScreen').classList.remove('show');
+  startQuiz(mode);
+}
+
+function goHome() {
+  clearInterval(timerInterval);
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizMain').classList.remove('show');
+  document.getElementById('startScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>
